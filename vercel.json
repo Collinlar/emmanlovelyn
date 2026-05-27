@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/client",
+  "serverlessFunctionRegion": "iad1",
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "destination": "/api/[[...route]]"
+    }
+  ]
+}
