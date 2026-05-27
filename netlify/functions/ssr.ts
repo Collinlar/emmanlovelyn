@@ -1,5 +1,3 @@
-import type { Context } from "@netlify/functions";
-
 let serverEntry: { fetch: Function };
 
 async function getServerEntry() {
@@ -10,7 +8,7 @@ async function getServerEntry() {
   return serverEntry;
 }
 
-export default async function handler(req: Request, context: Context) {
+export default async function handler(req: Request) {
   try {
     const handler = await getServerEntry();
 
@@ -31,5 +29,3 @@ export default async function handler(req: Request, context: Context) {
     );
   }
 }
-
-export const config = { path: "/api/ssr" };
