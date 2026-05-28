@@ -3,33 +3,59 @@ import { Volume2, VolumeX } from "lucide-react";
 import florals from "@/assets/florals.png";
 import couple from "@/assets/couple.jpg";
 import waxSeal from "@/assets/wax-seal.png";
+import { useRevealOnScroll, type RevealVariant } from "@/hooks/use-reveal-on-scroll";
 
-/** Ambient looping pad — gentle chord progression via Web Audio (no external files). */
-function createAmbientPlayer() {
+/** Uplifting wedding-style loop — I-V-vi-IV in C with bells, arpeggios, and a gentle waltz pulse. */
+function createCelebrationPlayer() {
   let ctx: AudioContext | null = null;
   let master: GainNode | null = null;
-  let timer: number | null = null;
+  let chordTimer: number | null = null;
+  let pulseTimer: number | null = null;
   let stopped = false;
+  let chordIndex = 0;
 
-  // Soft I-vi-IV-V progression in C (Cmaj, Amin, Fmaj, Gmaj)
+  // C → G → Am → F — classic celebratory wedding progression
   const chords: number[][] = [
     [261.63, 329.63, 392.0, 523.25],
+    [196.0, 246.94, 293.66, 392.0],
     [220.0, 261.63, 329.63, 440.0],
     [174.61, 261.63, 349.23, 440.0],
-    [196.0, 246.94, 392.0, 493.88],
   ];
 
-  function voice(freqs: number[], when: number, duration: number) {
+  function playTone(
+    freq: number,
+    when: number,
+    duration: number,
+    volume: number,
+    type: OscillatorType = "sine",
+    detune = 0,
+  ) {
+    if (!ctx || !master) return;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = type;
+    o.frequency.value = freq;
+    o.detune.value = detune;
+    g.gain.setValueAtTime(0.0001, when);
+    g.gain.exponentialRampToValueAtTime(volume, when + 0.04);
+    g.gain.exponentialRampToValueAtTime(0.0001, when + duration);
+    o.connect(g).connect(master);
+    o.start(when);
+    o.stop(when + duration + 0.05);
+  }
+
+  function playChord(freqs: number[], when: number, duration: number) {
     if (!ctx || !master) return;
     freqs.forEach((f, idx) => {
       const o = ctx!.createOscillator();
       const g = ctx!.createGain();
-      o.type = idx === 0 ? "sine" : "triangle";
+      o.type = idx === 0 ? "triangle" : "sine";
       o.frequency.value = f;
-      // gentle detune for warmth
-      o.detune.value = (idx - 1) * 4;
+      o.detune.value = (idx - 1.5) * 5;
+      const peak = idx === 0 ? 0.07 : 0.045;
       g.gain.setValueAtTime(0.0001, when);
-      g.gain.exponentialRampToValueAtTime(0.05, when + 1.2);
+      g.gain.exponentialRampToValueAtTime(peak, when + 0.35);
+      g.gain.setValueAtTime(peak * 0.85, when + duration * 0.6);
       g.gain.exponentialRampToValueAtTime(0.0001, when + duration);
       o.connect(g).connect(master!);
       o.start(when);
@@ -37,11 +63,45 @@ function createAmbientPlayer() {
     });
   }
 
-  function schedule(i: number) {
+  function playHarpArpeggio(freqs: number[], when: number) {
+    freqs.forEach((f, i) => {
+      playTone(f * 2, when + i * 0.14, 1.4, 0.028, "triangle", i * 2);
+    });
+    playTone(freqs[0] * 4, when + 0.55, 0.9, 0.012, "sine");
+  }
+
+  function playSparkle(when: number) {
+    [783.99, 987.77, 1174.66].forEach((f, i) => {
+      playTone(f, when + i * 0.08, 0.7, 0.018, "sine");
+    });
+  }
+
+  function playWaltzPulse(root: number, when: number) {
+    playTone(root / 2, when, 0.55, 0.055, "triangle");
+    playTone(root / 2, when + 0.55, 0.45, 0.035, "triangle");
+    playTone(root / 2, when + 1.05, 0.35, 0.025, "triangle");
+  }
+
+  function scheduleChord(i: number) {
     if (stopped || !ctx) return;
-    const dur = 4.5;
-    voice(chords[i % chords.length], ctx.currentTime + 0.05, dur);
-    timer = window.setTimeout(() => schedule(i + 1), dur * 1000 - 400);
+    const freqs = chords[i % chords.length];
+    const when = ctx.currentTime + 0.05;
+    const duration = 3.1;
+
+    playChord(freqs, when, duration);
+    playHarpArpeggio(freqs, when + 0.2);
+    playSparkle(when + 1.1);
+    playWaltzPulse(freqs[0], when + 0.08);
+
+    chordIndex = i + 1;
+    chordTimer = window.setTimeout(() => scheduleChord(chordIndex), duration * 1000 - 250);
+  }
+
+  function schedulePulse() {
+    if (stopped || !ctx) return;
+    const freqs = chords[chordIndex % chords.length];
+    playTone(freqs[0] * 1.5, ctx.currentTime, 0.35, 0.014, "sine");
+    pulseTimer = window.setTimeout(schedulePulse, 780);
   }
 
   return {
@@ -53,19 +113,21 @@ function createAmbientPlayer() {
       master = ctx.createGain();
       master.gain.value = 0;
       master.connect(ctx.destination);
-      master.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 2);
+      master.gain.linearRampToValueAtTime(0.38, ctx.currentTime + 1.8);
       stopped = false;
-      schedule(0);
+      scheduleChord(0);
+      pulseTimer = window.setTimeout(schedulePulse, 400);
     },
     setMuted(muted: boolean) {
       if (!ctx || !master) return;
-      const target = muted ? 0.0001 : 0.35;
+      const target = muted ? 0.0001 : 0.38;
       master.gain.cancelScheduledValues(ctx.currentTime);
-      master.gain.exponentialRampToValueAtTime(target, ctx.currentTime + 0.6);
+      master.gain.exponentialRampToValueAtTime(target, ctx.currentTime + 0.5);
     },
     stop() {
       stopped = true;
-      if (timer) clearTimeout(timer);
+      if (chordTimer) clearTimeout(chordTimer);
+      if (pulseTimer) clearTimeout(pulseTimer);
       if (ctx) {
         const c = ctx;
         setTimeout(() => c.close(), 500);
@@ -76,7 +138,12 @@ function createAmbientPlayer() {
   };
 }
 
-const WEDDING_DATE = new Date("2026-08-29T15:00:00+02:00");
+const EVENT_DATE = new Date("2026-08-29T10:00:00+02:00");
+const VENUE_NAME = "VIU lounge";
+const VENUE_ADDRESS = "Karlsplatz 1";
+const VENUE_CITY = "73614 Schorndorf";
+const VENUE_COUNTRY = "Germany";
+const MAP_DESTINATION = `${VENUE_NAME}, ${VENUE_ADDRESS}, ${VENUE_CITY}, ${VENUE_COUNTRY}`;
 
 function useCountdown(active: boolean) {
   const [now, setNow] = useState<number | null>(null);
@@ -87,7 +154,7 @@ function useCountdown(active: boolean) {
     return () => clearInterval(t);
   }, [active]);
   if (now === null) return null;
-  const diff = Math.max(0, WEDDING_DATE.getTime() - now);
+  const diff = Math.max(0, EVENT_DATE.getTime() - now);
   return {
     days: Math.floor(diff / 86400000),
     hours: Math.floor((diff / 3600000) % 24),
@@ -219,7 +286,7 @@ function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
             </p>
             <div className="h-px w-16 bg-accent/20 my-2" />
             <p className="font-sans text-[0.6rem] uppercase tracking-[0.45em] text-muted-foreground/90">
-              Wedding Invitation
+              Traditional Engagement Ceremony
             </p>
             <h2 className="mt-5 font-script text-4xl leading-tight text-primary md:text-5xl">
               Emmanuel
@@ -232,8 +299,11 @@ function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
             <p className="font-sans text-[0.65rem] uppercase tracking-[0.35em] text-muted-foreground mb-1">
               August 29, 2026
             </p>
+            <p className="font-sans text-[0.55rem] uppercase tracking-[0.25em] text-muted-foreground/80 mb-1">
+              10 am - 4 pm
+            </p>
             <p className="font-sans text-[0.55rem] uppercase tracking-[0.25em] text-muted-foreground/80">
-              Schorndorf, Germany
+              {VENUE_NAME}, {VENUE_CITY}, {VENUE_COUNTRY}
             </p>
           </div>
         </div>
@@ -419,10 +489,23 @@ function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
   );
 }
 
-function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function RevealSection({
+  children,
+  className = "",
+  variant = "fade-up",
+}: {
+  children: React.ReactNode;
+  className?: string;
+  variant?: RevealVariant;
+}) {
+  const { ref, visible } = useRevealOnScroll<HTMLElement>();
+
   return (
-    <section className={`relative mx-auto w-full max-w-3xl px-6 py-20 sm:py-28 ${className}`}>
-      {children}
+    <section
+      ref={ref}
+      className={`reveal-section reveal-${variant} ${visible ? "is-visible" : ""} relative mx-auto w-full max-w-3xl px-6 py-20 sm:py-28 ${className}`}
+    >
+      <div className="reveal-content">{children}</div>
     </section>
   );
 }
@@ -454,11 +537,11 @@ function Countdown({ active }: { active: boolean }) {
 export default function Invitation() {
   const [opened, setOpened] = useState(false);
   const [muted, setMuted] = useState(false);
-  const playerRef = useRef<ReturnType<typeof createAmbientPlayer> | null>(null);
+  const playerRef = useRef<ReturnType<typeof createCelebrationPlayer> | null>(null);
 
   useEffect(() => {
     if (!opened) return;
-    playerRef.current = createAmbientPlayer();
+    playerRef.current = createCelebrationPlayer();
     playerRef.current.start();
     return () => {
       playerRef.current?.stop();
@@ -486,7 +569,8 @@ export default function Invitation() {
 
       <div className={opened ? "animate-fade-up" : "opacity-0"}>
         {/* HERO */}
-        <Section className="flex min-h-screen flex-col items-center justify-center text-center">
+        <RevealSection variant="fade-up" className="flex min-h-screen flex-col items-center justify-center text-center">
+          <div className="reveal-stagger flex w-full flex-col items-center">
           <img
             src={florals}
             alt=""
@@ -496,25 +580,25 @@ export default function Invitation() {
             className="absolute left-1/2 top-6 w-72 -translate-x-1/2 opacity-80 sm:w-96"
           />
 
-          <p className="relative z-10 mt-32 font-sans text-xs uppercase tracking-[0.55em] text-muted-foreground">
-            Together with their families
-          </p>
-
-          <h1 className="relative z-10 mt-8 font-script text-6xl leading-none text-primary sm:text-8xl">Emmanuel</h1>
+          <h1 className="relative z-10 mt-32 font-script text-6xl leading-none text-primary sm:text-8xl">Emmanuel</h1>
           <p className="relative z-10 my-3 font-display text-xl italic text-accent-foreground">&amp;</p>
           <h1 className="relative z-10 font-script text-6xl leading-none text-primary sm:text-8xl">Lovelyne</h1>
 
-          <div className="relative z-10 mt-10 flex items-center gap-4 font-sans text-xs uppercase tracking-[0.4em] text-muted-foreground">
-            <span className="h-px w-10 bg-border" />
-            <span>Are getting married</span>
-            <span className="h-px w-10 bg-border" />
-          </div>
+          <p className="relative z-10 mt-10 max-w-md font-sans text-xs uppercase tracking-[0.35em] text-muted-foreground">
+            We cordially invite you to our
+          </p>
+          <p className="relative z-10 mt-3 font-sans text-sm uppercase tracking-[0.45em] text-foreground sm:text-base">
+            Traditional Engagement Ceremony
+          </p>
 
           <p className="relative z-10 mt-8 font-display text-2xl text-foreground sm:text-3xl">29 · 08 · 2026</p>
-        </Section>
+          <p className="relative z-10 mt-3 font-display text-lg text-muted-foreground sm:text-xl">10 am - 4 pm</p>
+          </div>
+        </RevealSection>
 
         {/* COUPLE IMAGE */}
-        <Section className="!max-w-5xl">
+        <RevealSection variant="scale-up" className="!max-w-5xl">
+          <div className="reveal-stagger">
           <div className="overflow-hidden rounded-sm shadow-[var(--shadow-elegant)]">
             <img
               src={couple}
@@ -526,28 +610,32 @@ export default function Invitation() {
             />
           </div>
           <p className="mt-8 text-center font-display text-xl italic text-muted-foreground sm:text-2xl">
-            "Two souls, one heart — bound by love, sealed by grace."
+            "...if we love one another, God lives in us and His love is made complete in us."
           </p>
-        </Section>
+          <p className="mt-3 text-center font-sans text-xs uppercase tracking-[0.35em] text-muted-foreground">
+            1 John 4:12
+          </p>
+          </div>
+        </RevealSection>
 
         {/* COUNTDOWN */}
-        <Section>
-          <div className="flex flex-col items-center text-center">
+        <RevealSection variant="blur-up">
+          <div className="reveal-stagger flex flex-col items-center text-center">
             <div className="divider-ornament mb-6 flex w-full items-center gap-4">
               <span className="font-sans text-[0.65rem] uppercase tracking-[0.5em] text-muted-foreground">
                 Counting Down
               </span>
             </div>
-            <h2 className="font-display text-3xl font-light text-primary sm:text-4xl">Until we say "I do"</h2>
+            <h2 className="font-display text-3xl font-light text-primary sm:text-4xl">Until we celebrate together</h2>
             <div className="mt-10 w-full">
               <Countdown active={opened} />
             </div>
           </div>
-        </Section>
+        </RevealSection>
 
         {/* DETAILS */}
-        <Section>
-          <div className="flex flex-col items-center text-center">
+        <RevealSection variant="fade-left">
+          <div className="reveal-stagger flex flex-col items-center text-center">
             <p className="font-sans text-[0.65rem] uppercase tracking-[0.5em] text-muted-foreground">The Celebration</p>
             <h2 className="mt-4 font-script text-5xl text-primary sm:text-6xl">When &amp; Where</h2>
 
@@ -557,27 +645,36 @@ export default function Invitation() {
                 <p className="mt-4 font-display text-2xl text-primary">Saturday</p>
                 <p className="mt-1 font-script text-4xl text-foreground">29 August</p>
                 <p className="mt-1 font-display text-xl text-muted-foreground">Two Thousand Twenty Six</p>
+                <p className="mt-4 font-display text-lg text-foreground">10 am - 4 pm</p>
               </div>
               <div className="rounded-sm border border-border bg-card/50 p-8">
                 <p className="font-sans text-[0.65rem] uppercase tracking-[0.4em] text-accent-foreground">The Venue</p>
-                <p className="mt-4 font-display text-2xl text-primary">Karlsplatz 1</p>
-                <p className="mt-1 font-display text-lg text-foreground">73614 Schorndorf</p>
-                <p className="mt-1 font-display text-lg text-muted-foreground">Germany</p>
+                <p className="mt-4 font-display text-2xl text-primary">{VENUE_NAME}</p>
+                <p className="mt-1 font-display text-lg text-foreground">{VENUE_ADDRESS}</p>
+                <p className="mt-1 font-display text-lg text-foreground">{VENUE_CITY}</p>
+                <p className="mt-1 font-display text-lg text-muted-foreground">{VENUE_COUNTRY}</p>
               </div>
             </div>
+
+            <p className="mt-10 max-w-lg font-display text-lg text-muted-foreground">
+              The event will include drinks and cocktails refreshments.
+            </p>
           </div>
-        </Section>
+        </RevealSection>
 
         {/* MAP */}
-        <Section className="!max-w-5xl">
+        <RevealSection variant="fade-right" className="!max-w-5xl">
+          <div className="reveal-stagger">
           <div className="text-center">
             <p className="font-sans text-[0.65rem] uppercase tracking-[0.5em] text-muted-foreground">Find Us Here</p>
-            <h2 className="mt-3 font-display text-3xl font-light text-primary sm:text-4xl">Schorndorf, Germany</h2>
+            <h2 className="mt-3 font-display text-3xl font-light text-primary sm:text-4xl">
+              {VENUE_NAME}, {VENUE_CITY}, {VENUE_COUNTRY}
+            </h2>
           </div>
           <div className="mt-10 overflow-hidden rounded-sm border border-border shadow-[var(--shadow-elegant)]">
             <iframe
-              title="Wedding venue map"
-              src="https://www.google.com/maps?q=Karlsplatz+1,+73614+Schorndorf,+Germany&output=embed"
+              title="Event venue map"
+              src={`https://www.google.com/maps?q=${encodeURIComponent(MAP_DESTINATION)}&output=embed`}
               className="h-[400px] w-full sm:h-[500px]"
               style={{ border: 0, filter: "sepia(0.15) saturate(0.9)" }}
               loading="lazy"
@@ -586,7 +683,7 @@ export default function Invitation() {
           </div>
           <div className="mt-6 text-center">
             <a
-              href="https://www.google.com/maps/dir/?api=1&destination=Karlsplatz+1,+73614+Schorndorf,+Germany"
+              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(MAP_DESTINATION)}`}
               target="_blank"
               rel="noreferrer"
               className="inline-block border-b border-accent px-2 pb-1 font-sans text-xs uppercase tracking-[0.4em] text-primary transition hover:text-accent-foreground"
@@ -594,10 +691,31 @@ export default function Invitation() {
               Get Directions
             </a>
           </div>
-        </Section>
+          </div>
+        </RevealSection>
 
-        {/* RSVP / CLOSING */}
-        <Section className="text-center">
+        {/* GIFTS */}
+        <RevealSection variant="fade-up">
+          <div className="reveal-stagger flex flex-col items-center text-center">
+            <h2 className="font-sans text-sm uppercase tracking-[0.5em] text-muted-foreground">Gifts</h2>
+            <p className="mt-8 max-w-xl font-display text-lg leading-relaxed text-muted-foreground sm:text-xl">
+              We are incredibly blessed to have your love and support. If you would like to honor us with a gift,
+              please find our registry and contribution details listed below:
+            </p>
+            <a
+              href="https://www.paypal.com/pool/9pyygG8bGg?sr=ancr"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-8 inline-block border-b border-accent px-2 pb-1 font-sans text-xs uppercase tracking-[0.25em] text-primary transition hover:text-accent-foreground break-all sm:text-sm"
+            >
+              View our gift registry
+            </a>
+          </div>
+        </RevealSection>
+
+        {/* CLOSING */}
+        <RevealSection variant="scale-up" className="text-center">
+          <div className="reveal-stagger">
           <img
             src={florals}
             alt=""
@@ -613,9 +731,10 @@ export default function Invitation() {
           <p className="mt-2 font-script text-4xl text-accent-foreground">Emmanuel &amp; Lovelyne</p>
           <div className="mx-auto mt-12 h-px w-24 bg-border" />
           <p className="mt-6 font-sans text-[0.6rem] uppercase tracking-[0.4em] text-muted-foreground">
-            29 · 08 · 2026 · Schorndorf
+            29 · 08 · 2026 · {VENUE_NAME}, {VENUE_CITY}
           </p>
-        </Section>
+          </div>
+        </RevealSection>
       </div>
     </main>
   );

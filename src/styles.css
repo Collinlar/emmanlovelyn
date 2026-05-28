@@ -83,6 +83,79 @@
 .animate-fade-up { animation: fade-up 1s ease-out both; }
 .animate-shimmer { animation: shimmer 3s ease-in-out infinite; }
 
+/* Scroll reveal — sections animate in as they enter the viewport */
+.reveal-section {
+  --reveal-distance: 2.5rem;
+  --reveal-duration: 0.95s;
+  --reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-section .reveal-content {
+  opacity: 0;
+  transition:
+    opacity var(--reveal-duration) var(--reveal-ease),
+    transform var(--reveal-duration) var(--reveal-ease),
+    filter var(--reveal-duration) var(--reveal-ease);
+  will-change: opacity, transform, filter;
+}
+
+.reveal-section.reveal-fade-up .reveal-content {
+  transform: translateY(var(--reveal-distance));
+}
+
+.reveal-section.reveal-fade-left .reveal-content {
+  transform: translateX(calc(var(--reveal-distance) * -1));
+}
+
+.reveal-section.reveal-fade-right .reveal-content {
+  transform: translateX(var(--reveal-distance));
+}
+
+.reveal-section.reveal-scale-up .reveal-content {
+  transform: scale(0.94) translateY(1rem);
+}
+
+.reveal-section.reveal-blur-up .reveal-content {
+  transform: translateY(1.75rem);
+  filter: blur(8px);
+}
+
+.reveal-section.is-visible .reveal-content {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition:
+    opacity 0.75s var(--reveal-ease),
+    transform 0.75s var(--reveal-ease);
+}
+
+.reveal-section.is-visible .reveal-stagger > * {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-section.is-visible .reveal-stagger > *:nth-child(1) { transition-delay: 0ms; }
+.reveal-section.is-visible .reveal-stagger > *:nth-child(2) { transition-delay: 120ms; }
+.reveal-section.is-visible .reveal-stagger > *:nth-child(3) { transition-delay: 240ms; }
+.reveal-section.is-visible .reveal-stagger > *:nth-child(4) { transition-delay: 360ms; }
+.reveal-section.is-visible .reveal-stagger > *:nth-child(5) { transition-delay: 480ms; }
+.reveal-section.is-visible .reveal-stagger > *:nth-child(6) { transition-delay: 600ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-section .reveal-content,
+  .reveal-stagger > * {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}
+
 .wax-seal {
   background: radial-gradient(circle at 30% 30%,
     oklch(0.82 0.11 75) 0%,
