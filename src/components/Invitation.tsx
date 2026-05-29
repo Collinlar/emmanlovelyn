@@ -4,6 +4,10 @@ import florals from "@/assets/florals.png";
 import couple from "@/assets/couple.jpg";
 import waxSeal from "@/assets/wax-seal.png";
 import { useRevealOnScroll, type RevealVariant } from "@/hooks/use-reveal-on-scroll";
+import {
+  SaveTheDateCard,
+} from "@/components/SaveTheDateCard";
+import SaveTheDateShare from "@/components/SaveTheDateShare";
 
 /** Uplifting wedding-style loop — I-V-vi-IV in C with bells, arpeggios, and a gentle waltz pulse. */
 function createCelebrationPlayer() {
@@ -217,25 +221,45 @@ function playOpenSound() {
   }
 }
 
-function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
+function EnvelopeIntro({
+  onOpen,
+  onComplete,
+}: {
+  onOpen: () => void;
+  onComplete: () => void;
+}) {
   const [opening, setOpening] = useState(false);
   const [isOpened, setIsOpened] = useState(false);
+  const [cardPhase, setCardPhase] = useState<"idle" | "rising" | "exiting">("idle");
 
   const handleOpen = () => {
     if (opening) return;
     setOpening(true);
+    setCardPhase("rising");
     playOpenSound();
-    
-    // Smooth transition timeline:
-    // 1. Click seal -> play sound, break seal (opacity 0), start folding top flap (duration 1.5s).
-    // 2. At 500ms, start sliding the letter card up (duration 1.8s).
-    // 3. At 2200ms, start fading out the entire envelope (duration 700ms).
-    // 4. At 2800ms, call onOpen to transition fully to the scrollable page.
-    setTimeout(() => {
-      setIsOpened(true);
+
+    // Card rises gradually over 3s, then the invitation page takes over.
+    window.setTimeout(() => {
       onOpen();
-    }, 2800);
+      setCardPhase("exiting");
+    }, 3000);
+    window.setTimeout(() => {
+      setIsOpened(true);
+      onComplete();
+    }, 3800);
   };
+
+  const cardTransform =
+    cardPhase === "idle"
+      ? "translate(-50%, -46%) scale(0.94)"
+      : cardPhase === "rising"
+        ? "translate(-50%, -50%) scale(1)"
+        : "translate(-50%, -115vh) scale(0.92)";
+
+  const cardOpacity = cardPhase === "exiting" ? 0 : 1;
+  const cardDuration =
+    cardPhase === "rising" ? "3000ms" : cardPhase === "exiting" ? "700ms" : "3000ms";
+  const cardDelay = cardPhase === "rising" ? "350ms" : "0ms";
 
   const paperTextureStyle = {
     backgroundImage: `
@@ -257,55 +281,24 @@ function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
           style={paperTextureStyle}
         />
 
-        {/* Letter Card (slides up out of the envelope) */}
+        {/* Letter Card (rises slowly from the envelope) */}
         <div
-          className="absolute rounded-sm transition-all duration-[1800ms] cubic-bezier(0.25, 1, 0.5, 1)"
+          className="absolute rounded-sm"
           style={{
             width: "min(90vw, 520px)",
             height: "min(75vh, 650px)",
             top: "50%",
             left: "50%",
-            transform: opening 
-              ? "translate(-50%, -125vh) scale(0.95)" 
-              : "translate(-50%, -46%) scale(0.95)",
-            opacity: opening ? 0.3 : 1,
+            transform: cardTransform,
+            opacity: cardOpacity,
             zIndex: 10,
-            backgroundImage: `
-              radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9), rgba(252, 250, 244, 0.95)),
-              url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='cardNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23cardNoise)' opacity='0.025'/%3E%3C/svg%3E")
-            `,
-            border: "1px solid oklch(0.85 0.022 70 / 0.5)",
-            boxShadow: "0 15px 45px oklch(0.35 0.05 50 / 0.12), inset 0 0 30px oklch(0.72 0.06 65 / 0.05)",
-            transitionDelay: opening ? "500ms" : "0ms"
+            transitionProperty: "transform, opacity",
+            transitionDuration: cardDuration,
+            transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+            transitionDelay: cardDelay,
           }}
         >
-          {/* Card Frame Content */}
-          <div className="flex h-full flex-col items-center justify-center p-6 text-center border-4 border-double border-accent/20 m-2.5 rounded-sm">
-            <p className="font-sans text-[0.65rem] uppercase tracking-[0.55em] text-accent-foreground/80 mb-2">
-              Save The Date
-            </p>
-            <div className="h-px w-16 bg-accent/20 my-2" />
-            <p className="font-sans text-[0.6rem] uppercase tracking-[0.45em] text-muted-foreground/90">
-              Traditional Engagement Ceremony
-            </p>
-            <h2 className="mt-5 font-script text-4xl leading-tight text-primary md:text-5xl">
-              Emmanuel
-            </h2>
-            <p className="font-display text-lg italic text-accent-foreground/60 my-1">&amp;</p>
-            <h2 className="font-script text-4xl leading-tight text-primary md:text-5xl">
-              Lovelyne
-            </h2>
-            <div className="h-px w-16 bg-accent/20 my-4" />
-            <p className="font-sans text-[0.65rem] uppercase tracking-[0.35em] text-muted-foreground mb-1">
-              August 29, 2026
-            </p>
-            <p className="font-sans text-[0.55rem] uppercase tracking-[0.25em] text-muted-foreground/80 mb-1">
-              10 am - 4 pm
-            </p>
-            <p className="font-sans text-[0.55rem] uppercase tracking-[0.25em] text-muted-foreground/80">
-              {VENUE_NAME}, {VENUE_CITY}, {VENUE_COUNTRY}
-            </p>
-          </div>
+          <SaveTheDateCard className="h-full w-full" />
         </div>
 
         {/* Diagonal Flaps Layer (Perspective container) */}
@@ -368,7 +361,7 @@ function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
 
           {/* Top Flap (opens) */}
           <div 
-            className="absolute inset-0 transition-all duration-[1500ms] ease-in-out"
+            className="absolute inset-0 transition-all duration-[1000ms] ease-in-out"
             style={{
               height: "50.2%",
               width: "100.2%",
@@ -536,6 +529,7 @@ function Countdown({ active }: { active: boolean }) {
 
 export default function Invitation() {
   const [opened, setOpened] = useState(false);
+  const [showEnvelope, setShowEnvelope] = useState(true);
   const [muted, setMuted] = useState(false);
   const playerRef = useRef<ReturnType<typeof createCelebrationPlayer> | null>(null);
 
@@ -555,7 +549,12 @@ export default function Invitation() {
 
   return (
     <main className="min-h-screen">
-      {!opened && <EnvelopeIntro onOpen={() => setOpened(true)} />}
+      {showEnvelope && (
+        <EnvelopeIntro
+          onOpen={() => setOpened(true)}
+          onComplete={() => setShowEnvelope(false)}
+        />
+      )}
 
       {opened && (
         <button
@@ -570,17 +569,17 @@ export default function Invitation() {
       <div className={opened ? "animate-fade-up" : "opacity-0"}>
         {/* HERO */}
         <RevealSection variant="fade-up" className="flex min-h-screen flex-col items-center justify-center text-center">
-          <div className="reveal-stagger flex w-full flex-col items-center">
+          <div className="reveal-stagger flex w-full flex-col items-center pt-6 sm:pt-0">
           <img
             src={florals}
             alt=""
             loading="lazy"
             width={1024}
             height={1024}
-            className="absolute left-1/2 top-6 w-72 -translate-x-1/2 opacity-80 sm:w-96"
+            className="mx-auto mb-4 w-32 shrink-0 opacity-55 pointer-events-none sm:mb-6 sm:w-56 sm:opacity-65 md:w-64 lg:w-72"
           />
 
-          <h1 className="relative z-10 mt-32 font-script text-6xl leading-none text-primary sm:text-8xl">Emmanuel</h1>
+          <h1 className="relative z-10 font-script text-6xl leading-none text-primary sm:text-8xl">Emmanuel</h1>
           <p className="relative z-10 my-3 font-display text-xl italic text-accent-foreground">&amp;</p>
           <h1 className="relative z-10 font-script text-6xl leading-none text-primary sm:text-8xl">Lovelyne</h1>
 
@@ -711,6 +710,11 @@ export default function Invitation() {
               View our gift registry
             </a>
           </div>
+        </RevealSection>
+
+        {/* SAVE THE DATE SHARE */}
+        <RevealSection variant="fade-up">
+          <SaveTheDateShare />
         </RevealSection>
 
         {/* CLOSING */}
