@@ -12,4 +12,7 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
+  vite: {
+    envPrefix: ["VITE_", "NEXT_PUBLIC_"],
+  },
 });

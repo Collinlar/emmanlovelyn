@@ -7,7 +7,7 @@ import { useRevealOnScroll, type RevealVariant } from "@/hooks/use-reveal-on-scr
 import {
   SaveTheDateCard,
 } from "@/components/SaveTheDateCard";
-import SaveTheDateShare from "@/components/SaveTheDateShare";
+import Guestbook from "@/components/Guestbook";
 
 /** Uplifting wedding-style loop — I-V-vi-IV in C with bells, arpeggios, and a gentle waltz pulse. */
 function createCelebrationPlayer() {
@@ -712,9 +712,9 @@ export default function Invitation() {
           </div>
         </RevealSection>
 
-        {/* SAVE THE DATE SHARE */}
+        {/* GUESTBOOK */}
         <RevealSection variant="fade-up">
-          <SaveTheDateShare />
+          <Guestbook />
         </RevealSection>
 
         {/* CLOSING */}
