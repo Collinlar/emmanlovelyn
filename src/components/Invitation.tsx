@@ -8,6 +8,9 @@ import {
   SaveTheDateCard,
 } from "@/components/SaveTheDateCard";
 import Guestbook from "@/components/Guestbook";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import LanguagePrompt from "@/components/LanguagePrompt";
+import { useTranslation } from "@/i18n/useTranslation";
 
 /** Uplifting wedding-style loop — I-V-vi-IV in C with bells, arpeggios, and a gentle waltz pulse. */
 function createCelebrationPlayer() {
@@ -143,11 +146,6 @@ function createCelebrationPlayer() {
 }
 
 const EVENT_DATE = new Date("2026-08-29T10:00:00+02:00");
-const VENUE_NAME = "VIU lounge";
-const VENUE_ADDRESS = "Karlsplatz 1";
-const VENUE_CITY = "73614 Schorndorf";
-const VENUE_COUNTRY = "Germany";
-const MAP_DESTINATION = `${VENUE_NAME}, ${VENUE_ADDRESS}, ${VENUE_CITY}, ${VENUE_COUNTRY}`;
 
 function useCountdown(active: boolean) {
   const [now, setNow] = useState<number | null>(null);
@@ -228,6 +226,7 @@ function EnvelopeIntro({
   onOpen: () => void;
   onComplete: () => void;
 }) {
+  const { t } = useTranslation();
   const [opening, setOpening] = useState(false);
   const [isOpened, setIsOpened] = useState(false);
   const [cardPhase, setCardPhase] = useState<"idle" | "rising" | "exiting">("idle");
@@ -403,7 +402,7 @@ function EnvelopeIntro({
           {/* Main Wax Seal button */}
           <button
             onClick={handleOpen}
-            aria-label="Open invitation"
+            aria-label={t("envelope.openAria")}
             className="relative cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none"
             style={{
               width: "min(28vw, 140px)",
@@ -413,7 +412,7 @@ function EnvelopeIntro({
           >
             <img
               src={waxSeal}
-              alt="Golden wax seal with monogram"
+              alt={t("envelope.sealAlt")}
               width={512}
               height={512}
               className="h-full w-full object-contain"
@@ -463,7 +462,7 @@ function EnvelopeIntro({
               className="mt-1 font-display text-[9px] tracking-[0.25em] text-[#6d1b22] uppercase font-semibold"
               style={{ textShadow: "1px 1px 0px rgba(255,255,255,0.75)" }}
             >
-              The Digital Yes
+              {t("envelope.digitalYes")}
             </span>
           </div>
         </div>
@@ -474,7 +473,7 @@ function EnvelopeIntro({
           style={{ opacity: opening ? 0 : 0.85 }}
         >
           <p className="font-sans text-[0.6rem] uppercase tracking-[0.45em] text-[#6d1b22] font-semibold animate-pulse">
-            Tap the seal to open
+            {t("envelope.tapSeal")}
           </p>
         </div>
       </div>
@@ -504,12 +503,13 @@ function RevealSection({
 }
 
 function Countdown({ active }: { active: boolean }) {
+  const { t } = useTranslation();
   const c = useCountdown(active);
   const items = [
-    { label: "Days", value: c?.days ?? 0 },
-    { label: "Hours", value: c?.hours ?? 0 },
-    { label: "Minutes", value: c?.minutes ?? 0 },
-    { label: "Seconds", value: c?.seconds ?? 0 },
+    { label: t("countdown.days"), value: c?.days ?? 0 },
+    { label: t("countdown.hours"), value: c?.hours ?? 0 },
+    { label: t("countdown.minutes"), value: c?.minutes ?? 0 },
+    { label: t("countdown.seconds"), value: c?.seconds ?? 0 },
   ];
   return (
     <div className="grid grid-cols-4 gap-3 sm:gap-6">
@@ -528,10 +528,13 @@ function Countdown({ active }: { active: boolean }) {
 }
 
 export default function Invitation() {
+  const { t } = useTranslation();
   const [opened, setOpened] = useState(false);
   const [showEnvelope, setShowEnvelope] = useState(true);
   const [muted, setMuted] = useState(false);
   const playerRef = useRef<ReturnType<typeof createCelebrationPlayer> | null>(null);
+
+  const mapDestination = `${t("venue.name")}, ${t("venue.address")}, ${t("venue.city")}, ${t("venue.country")}`;
 
   useEffect(() => {
     if (!opened) return;
@@ -549,6 +552,8 @@ export default function Invitation() {
 
   return (
     <main className="min-h-screen">
+      <LanguageSwitcher />
+      <LanguagePrompt />
       {showEnvelope && (
         <EnvelopeIntro
           onOpen={() => setOpened(true)}
@@ -559,7 +564,7 @@ export default function Invitation() {
       {opened && (
         <button
           onClick={() => setMuted((m) => !m)}
-          aria-label={muted ? "Unmute music" : "Mute music"}
+          aria-label={muted ? t("audio.unmute") : t("audio.mute")}
           className="fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-border bg-card/80 text-primary shadow-[var(--shadow-elegant)] backdrop-blur-md transition hover:scale-105 hover:bg-card"
         >
           {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
@@ -584,14 +589,18 @@ export default function Invitation() {
           <h1 className="relative z-10 font-script text-6xl leading-none text-primary sm:text-8xl">Lovelyne</h1>
 
           <p className="relative z-10 mt-10 max-w-md font-sans text-xs uppercase tracking-[0.35em] text-muted-foreground">
-            We cordially invite you to our
+            {t("hero.invitePrefix")}
           </p>
           <p className="relative z-10 mt-3 font-sans text-sm uppercase tracking-[0.45em] text-foreground sm:text-base">
-            Traditional Engagement Ceremony
+            {t("hero.ceremonyName")}
           </p>
 
-          <p className="relative z-10 mt-8 font-display text-2xl text-foreground sm:text-3xl">29 · 08 · 2026</p>
-          <p className="relative z-10 mt-3 font-display text-lg text-muted-foreground sm:text-xl">10 am - 4 pm</p>
+          <p className="relative z-10 mt-8 font-display text-2xl text-foreground sm:text-3xl">
+            {t("hero.dateDisplay")}
+          </p>
+          <p className="relative z-10 mt-3 font-display text-lg text-muted-foreground sm:text-xl">
+            {t("hero.timeDisplay")}
+          </p>
           </div>
         </RevealSection>
 
@@ -601,7 +610,7 @@ export default function Invitation() {
           <div className="overflow-hidden rounded-sm shadow-[var(--shadow-elegant)]">
             <img
               src={couple}
-              alt="Emmanuel and Lovelyne"
+              alt={t("couple.photoAlt")}
               loading="lazy"
               width={1080}
               height={1920}
@@ -609,10 +618,10 @@ export default function Invitation() {
             />
           </div>
           <p className="mt-8 text-center font-display text-xl italic text-muted-foreground sm:text-2xl">
-            "...if we love one another, God lives in us and His love is made complete in us."
+            {t("couple.scriptureQuote")}
           </p>
           <p className="mt-3 text-center font-sans text-xs uppercase tracking-[0.35em] text-muted-foreground">
-            1 John 4:12
+            {t("couple.scriptureRef")}
           </p>
           </div>
         </RevealSection>
@@ -622,10 +631,12 @@ export default function Invitation() {
           <div className="reveal-stagger flex flex-col items-center text-center">
             <div className="divider-ornament mb-6 flex w-full items-center gap-4">
               <span className="font-sans text-[0.65rem] uppercase tracking-[0.5em] text-muted-foreground">
-                Counting Down
+                {t("countdown.label")}
               </span>
             </div>
-            <h2 className="font-display text-3xl font-light text-primary sm:text-4xl">Until we celebrate together</h2>
+            <h2 className="font-display text-3xl font-light text-primary sm:text-4xl">
+              {t("countdown.heading")}
+            </h2>
             <div className="mt-10 w-full">
               <Countdown active={opened} />
             </div>
@@ -635,28 +646,34 @@ export default function Invitation() {
         {/* DETAILS */}
         <RevealSection variant="fade-left">
           <div className="reveal-stagger flex flex-col items-center text-center">
-            <p className="font-sans text-[0.65rem] uppercase tracking-[0.5em] text-muted-foreground">The Celebration</p>
-            <h2 className="mt-4 font-script text-5xl text-primary sm:text-6xl">When &amp; Where</h2>
+            <p className="font-sans text-[0.65rem] uppercase tracking-[0.5em] text-muted-foreground">
+              {t("details.sectionLabel")}
+            </p>
+            <h2 className="mt-4 font-script text-5xl text-primary sm:text-6xl">{t("details.heading")}</h2>
 
             <div className="mt-12 grid w-full gap-10 sm:grid-cols-2">
               <div className="rounded-sm border border-border bg-card/50 p-8">
-                <p className="font-sans text-[0.65rem] uppercase tracking-[0.4em] text-accent-foreground">The Date</p>
-                <p className="mt-4 font-display text-2xl text-primary">Saturday</p>
-                <p className="mt-1 font-script text-4xl text-foreground">29 August</p>
-                <p className="mt-1 font-display text-xl text-muted-foreground">Two Thousand Twenty Six</p>
-                <p className="mt-4 font-display text-lg text-foreground">10 am - 4 pm</p>
+                <p className="font-sans text-[0.65rem] uppercase tracking-[0.4em] text-accent-foreground">
+                  {t("details.dateLabel")}
+                </p>
+                <p className="mt-4 font-display text-2xl text-primary">{t("details.dayName")}</p>
+                <p className="mt-1 font-script text-4xl text-foreground">{t("details.dateMonth")}</p>
+                <p className="mt-1 font-display text-xl text-muted-foreground">{t("details.dateYear")}</p>
+                <p className="mt-4 font-display text-lg text-foreground">{t("details.timeRange")}</p>
               </div>
               <div className="rounded-sm border border-border bg-card/50 p-8">
-                <p className="font-sans text-[0.65rem] uppercase tracking-[0.4em] text-accent-foreground">The Venue</p>
-                <p className="mt-4 font-display text-2xl text-primary">{VENUE_NAME}</p>
-                <p className="mt-1 font-display text-lg text-foreground">{VENUE_ADDRESS}</p>
-                <p className="mt-1 font-display text-lg text-foreground">{VENUE_CITY}</p>
-                <p className="mt-1 font-display text-lg text-muted-foreground">{VENUE_COUNTRY}</p>
+                <p className="font-sans text-[0.65rem] uppercase tracking-[0.4em] text-accent-foreground">
+                  {t("details.venueLabel")}
+                </p>
+                <p className="mt-4 font-display text-2xl text-primary">{t("venue.name")}</p>
+                <p className="mt-1 font-display text-lg text-foreground">{t("venue.address")}</p>
+                <p className="mt-1 font-display text-lg text-foreground">{t("venue.city")}</p>
+                <p className="mt-1 font-display text-lg text-muted-foreground">{t("venue.country")}</p>
               </div>
             </div>
 
             <p className="mt-10 max-w-lg font-display text-lg text-muted-foreground">
-              The event will include drinks and cocktails refreshments.
+              {t("details.refreshments")}
             </p>
           </div>
         </RevealSection>
@@ -665,15 +682,17 @@ export default function Invitation() {
         <RevealSection variant="fade-right" className="!max-w-5xl">
           <div className="reveal-stagger">
           <div className="text-center">
-            <p className="font-sans text-[0.65rem] uppercase tracking-[0.5em] text-muted-foreground">Find Us Here</p>
+            <p className="font-sans text-[0.65rem] uppercase tracking-[0.5em] text-muted-foreground">
+              {t("map.label")}
+            </p>
             <h2 className="mt-3 font-display text-3xl font-light text-primary sm:text-4xl">
-              {VENUE_NAME}, {VENUE_CITY}, {VENUE_COUNTRY}
+              {t("venue.name")}, {t("venue.city")}, {t("venue.country")}
             </h2>
           </div>
           <div className="mt-10 overflow-hidden rounded-sm border border-border shadow-[var(--shadow-elegant)]">
             <iframe
-              title="Event venue map"
-              src={`https://www.google.com/maps?q=${encodeURIComponent(MAP_DESTINATION)}&output=embed`}
+              title={t("map.iframeTitle")}
+              src={`https://www.google.com/maps?q=${encodeURIComponent(mapDestination)}&output=embed`}
               className="h-[400px] w-full sm:h-[500px]"
               style={{ border: 0, filter: "sepia(0.15) saturate(0.9)" }}
               loading="lazy"
@@ -682,12 +701,12 @@ export default function Invitation() {
           </div>
           <div className="mt-6 text-center">
             <a
-              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(MAP_DESTINATION)}`}
+              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapDestination)}`}
               target="_blank"
               rel="noreferrer"
               className="inline-block border-b border-accent px-2 pb-1 font-sans text-xs uppercase tracking-[0.4em] text-primary transition hover:text-accent-foreground"
             >
-              Get Directions
+              {t("map.directions")}
             </a>
           </div>
           </div>
@@ -696,10 +715,11 @@ export default function Invitation() {
         {/* GIFTS */}
         <RevealSection variant="fade-up">
           <div className="reveal-stagger flex flex-col items-center text-center">
-            <h2 className="font-sans text-sm uppercase tracking-[0.5em] text-muted-foreground">Gifts</h2>
+            <h2 className="font-sans text-sm uppercase tracking-[0.5em] text-muted-foreground">
+              {t("gifts.heading")}
+            </h2>
             <p className="mt-8 max-w-xl font-display text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              We are incredibly blessed to have your love and support. If you would like to honor us with a gift,
-              please find our registry and contribution details listed below:
+              {t("gifts.body")}
             </p>
             <a
               href="https://www.paypal.com/pool/9pyygG8bGg?sr=ancr"
@@ -707,7 +727,7 @@ export default function Invitation() {
               rel="noreferrer"
               className="mt-8 inline-block border-b border-accent px-2 pb-1 font-sans text-xs uppercase tracking-[0.25em] text-primary transition hover:text-accent-foreground break-all sm:text-sm"
             >
-              View our gift registry
+              {t("gifts.registryLink")}
             </a>
           </div>
         </RevealSection>
@@ -729,13 +749,13 @@ export default function Invitation() {
             className="mx-auto w-48 rotate-180 opacity-70 sm:w-64"
           />
           <p className="mt-6 font-display text-2xl italic text-muted-foreground">
-            Your presence is the greatest gift of all.
+            {t("closing.presence")}
           </p>
-          <p className="mt-10 font-script text-5xl text-primary">With love,</p>
+          <p className="mt-10 font-script text-5xl text-primary">{t("closing.withLove")}</p>
           <p className="mt-2 font-script text-4xl text-accent-foreground">Emmanuel &amp; Lovelyne</p>
           <div className="mx-auto mt-12 h-px w-24 bg-border" />
           <p className="mt-6 font-sans text-[0.6rem] uppercase tracking-[0.4em] text-muted-foreground">
-            29 · 08 · 2026 · {VENUE_NAME}, {VENUE_CITY}
+            {t("closing.footerDate", { venue: t("venue.name"), city: t("venue.city") })}
           </p>
           </div>
         </RevealSection>

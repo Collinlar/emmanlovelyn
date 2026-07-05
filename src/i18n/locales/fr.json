@@ -1,0 +1,128 @@
+{
+  "language": {
+    "english": "English",
+    "french": "Français",
+    "switchToEnglish": "English",
+    "switchToFrench": "Français",
+    "promptQuestion": "Souhaitez-vous voir cette invitation en français?",
+    "promptAccept": "Oui, en français",
+    "promptDecline": "Rester en anglais"
+  },
+  "meta": {
+    "title": "Emmanuel & Lovelyne · Fiançailles traditionnelles · 29 août 2026",
+    "description": "Vous êtes invités à la cérémonie de fiançailles traditionnelles d'Emmanuel et Lovelyne le 29 août 2026, de 10 h à 16 h, au VIU lounge, Schorndorf, Allemagne.",
+    "ogTitle": "Emmanuel & Lovelyne · Fiançailles traditionnelles",
+    "ogDescription": "29 août 2026 · 10 h - 16 h · VIU lounge, Karlsplatz 1, Schorndorf, Allemagne"
+  },
+  "errors": {
+    "notFoundTitle": "Page introuvable",
+    "notFoundBody": "La page que vous cherchez n'existe pas ou a été déplacée.",
+    "goHome": "Retour à l'accueil",
+    "loadTitle": "Cette page n'a pas pu se charger",
+    "loadBody": "Un problème est survenu de notre côté. Actualisez la page ou retournez à l'accueil.",
+    "tryAgain": "Réessayer"
+  },
+  "envelope": {
+    "openAria": "Ouvrir l'invitation",
+    "sealAlt": "Sceau de cire doré avec monogramme",
+    "digitalYes": "Le Oui Numérique",
+    "tapSeal": "Appuyez sur le sceau pour ouvrir"
+  },
+  "audio": {
+    "mute": "Couper la musique",
+    "unmute": "Activer la musique"
+  },
+  "hero": {
+    "invitePrefix": "Nous avons le plaisir de vous inviter à notre",
+    "ceremonyName": "Cérémonie de Fiançailles Traditionnelle",
+    "dateDisplay": "29 · 08 · 2026",
+    "timeDisplay": "10 h - 16 h"
+  },
+  "couple": {
+    "photoAlt": "Emmanuel et Lovelyne",
+    "scriptureQuote": "...si nous nous aimons les uns les autres, Dieu demeure en nous, et son amour est parfait en nous.",
+    "scriptureRef": "1 Jean 4:12"
+  },
+  "countdown": {
+    "label": "Compte à rebours",
+    "heading": "Jusqu'à notre célébration",
+    "days": "Jours",
+    "hours": "Heures",
+    "minutes": "Minutes",
+    "seconds": "Secondes"
+  },
+  "details": {
+    "sectionLabel": "La Célébration",
+    "heading": "Quand et Où",
+    "dateLabel": "La Date",
+    "dayName": "Samedi",
+    "dateMonth": "29 août",
+    "dateYear": "Deux Mille Vingt-Six",
+    "timeRange": "10 h - 16 h",
+    "venueLabel": "Le Lieu",
+    "country": "Allemagne",
+    "refreshments": "La célébration comprendra des boissons et des rafraîchissements."
+  },
+  "map": {
+    "label": "Comment nous trouver",
+    "iframeTitle": "Carte du lieu de la cérémonie",
+    "directions": "Obtenir l'itinéraire"
+  },
+  "gifts": {
+    "heading": "Cadeaux",
+    "body": "Nous sommes profondément touchés par votre amour et votre soutien. Si vous souhaitez nous honorer d'un cadeau, vous trouverez ci-dessous notre registre et les détails de contribution :",
+    "registryLink": "Voir notre registre de cadeaux"
+  },
+  "guestbook": {
+    "subtitle": "Mots pour l'avenir",
+    "heading": "Un mot pour les mariés",
+    "intro": "Nous serions ravis de lire vos bénédictions! Laissez-nous un message ou un souvenir précieux dans notre livre d'or numérique.",
+    "fromLabel": "De",
+    "fromPlaceholder": "Votre nom",
+    "messageLabel": "Message",
+    "messageLanguageLabel": "Langue du message",
+    "messageLanguageHint": "Choisissez la langue dans laquelle vous écrivez. Votre message apparaîtra aux visiteurs qui consultent le site dans cette langue.",
+    "messageLanguageEn": "English",
+    "messageLanguageFr": "Français",
+    "messagePlaceholder": "Partagez votre bénédiction, un conseil ou un souvenir précieux...",
+    "submit": "Laisser notre bénédiction",
+    "submitting": "Ajout de votre bénédiction...",
+    "notConfigured": "Le livre d'or sera bientôt prêt. Les messages apparaîtront ici une fois la base de données connectée.",
+    "success": "Merci. Votre bénédiction a été ajoutée à notre livre d'or.",
+    "messagesHeading": "Messages d'amour",
+    "loading": "Collecte des bénédictions...",
+    "loadError": "Impossible de charger les messages pour le moment. Actualisez et réessayez.",
+    "empty": "Soyez le premier à laisser un mot en français à Emmanuel et Lovelyne.",
+    "validation": {
+      "languageRequired": "Choisissez la langue dans laquelle vous écrivez",
+      "nameMin": "Votre nom doit contenir au moins 2 caractères",
+      "nameMax": "Votre nom ne peut pas dépasser 80 caractères",
+      "messageMin": "Votre message doit contenir au moins 10 caractères",
+      "messageMax": "Votre message ne peut pas dépasser 1000 caractères"
+    },
+    "errors": {
+      "load": "Impossible de charger le livre d'or pour le moment.",
+      "notConnected": "Le livre d'or n'est pas encore connecté. Revenez bientôt.",
+      "submit": "Votre message n'a pas pu être envoyé. Veuillez réessayer."
+    }
+  },
+  "closing": {
+    "presence": "Votre présence est le plus beau des cadeaux.",
+    "withLove": "Avec amour,",
+    "footerDate": "29 · 08 · 2026 · {venue}, {city}"
+  },
+  "saveTheDate": {
+    "heading": "Réservez la Date",
+    "ceremonyName": "Cérémonie de Fiançailles Traditionnelle",
+    "date": "29 août 2026",
+    "time": "10 h - 16 h",
+    "venueLine": "{venue}, {city}, {country}",
+    "shareText": "Emmanuel et Lovelyne vous invitent à leur cérémonie de fiançailles traditionnelle le 29 août 2026, de 10 h à 16 h, au VIU lounge, Schorndorf, Allemagne."
+  },
+  "venue": {
+    "name": "VIU lounge",
+    "address": "Karlsplatz 1",
+    "city": "73614 Schorndorf",
+    "country": "Allemagne"
+  }
+}

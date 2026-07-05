@@ -1,15 +1,19 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
+import type { Locale } from "@/i18n/types";
+
 export type GuestbookMessage = {
   id: string;
   guest_name: string;
   message: string;
+  locale: Locale;
   created_at: string;
 };
 
 export type GuestbookMessageInput = {
   guest_name: string;
   message: string;
+  locale: Locale;
 };
 
 const supabaseUrl =

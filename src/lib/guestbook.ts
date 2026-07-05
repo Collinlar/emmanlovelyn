@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Locale } from "@/i18n/types";
 import {
   getSupabaseClient,
   isGuestbookConfigured,
@@ -6,43 +7,60 @@ import {
   type GuestbookMessageInput,
 } from "@/lib/supabase";
 
-export const guestbookSchema = z.object({
-  guest_name: z
-    .string()
-    .trim()
-    .min(2, "Your name needs at least 2 characters")
-    .max(80, "Your name cannot be longer than 80 characters"),
-  message: z
-    .string()
-    .trim()
-    .min(10, "Your message needs at least 10 characters")
-    .max(1000, "Your message cannot be longer than 1000 characters"),
-});
+type TranslateFn = (key: string) => string;
 
-export async function fetchGuestbookMessages(): Promise<GuestbookMessage[]> {
+export function createGuestbookSchema(t: TranslateFn) {
+  return z.object({
+    guest_name: z
+      .string()
+      .trim()
+      .min(2, t("guestbook.validation.nameMin"))
+      .max(80, t("guestbook.validation.nameMax")),
+    message: z
+      .string()
+      .trim()
+      .min(10, t("guestbook.validation.messageMin"))
+      .max(1000, t("guestbook.validation.messageMax")),
+    locale: z.enum(["en", "fr"], {
+      required_error: t("guestbook.validation.languageRequired"),
+    }),
+  });
+}
+
+export async function fetchGuestbookMessages(
+  t: TranslateFn,
+  locale: Locale,
+): Promise<GuestbookMessage[]> {
   const supabase = getSupabaseClient();
   if (!supabase) return [];
 
   const { data, error } = await supabase
     .from("guestbook_messages")
-    .select("id, guest_name, message, created_at")
+    .select("id, guest_name, message, locale, created_at")
     .eq("is_visible", true)
+    .eq("locale", locale)
     .order("created_at", { ascending: false })
     .limit(50);
 
-  if (error) throw new Error("We could not load the guestbook just now.");
-  return data ?? [];
+  if (error) throw new Error(t("guestbook.errors.load"));
+  return (data ?? []).map((row) => ({
+    ...row,
+    locale: row.locale as Locale,
+  }));
 }
 
-export async function submitGuestbookMessage(input: GuestbookMessageInput): Promise<GuestbookMessage> {
+export async function submitGuestbookMessage(
+  input: GuestbookMessageInput,
+  t: TranslateFn,
+): Promise<GuestbookMessage> {
   if (!isGuestbookConfigured()) {
-    throw new Error("The guestbook is not connected yet. Please check back shortly.");
+    throw new Error(t("guestbook.errors.notConnected"));
   }
 
-  const parsed = guestbookSchema.parse(input);
+  const parsed = createGuestbookSchema(t).parse(input);
   const supabase = getSupabaseClient();
   if (!supabase) {
-    throw new Error("The guestbook is not connected yet. Please check back shortly.");
+    throw new Error(t("guestbook.errors.notConnected"));
   }
 
   const { data, error } = await supabase
@@ -50,10 +68,11 @@ export async function submitGuestbookMessage(input: GuestbookMessageInput): Prom
     .insert({
       guest_name: parsed.guest_name,
       message: parsed.message,
+      locale: parsed.locale,
     })
-    .select("id, guest_name, message, created_at")
+    .select("id, guest_name, message, locale, created_at")
     .single();
 
-  if (error) throw new Error("Your message did not go through. Please try again.");
-  return data;
+  if (error) throw new Error(t("guestbook.errors.submit"));
+  return { ...data, locale: data.locale as Locale };
 }

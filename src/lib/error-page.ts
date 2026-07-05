@@ -1,9 +1,25 @@
-export function renderErrorPage(): string {
+import en from "@/i18n/locales/en.json";
+import fr from "@/i18n/locales/fr.json";
+import { isLocale } from "@/i18n/translations";
+import type { Locale } from "@/i18n/types";
+
+function getErrorCopy(locale: Locale) {
+  return locale === "fr" ? fr.errors : en.errors;
+}
+
+export function resolveErrorPageLocale(url: string | URL): Locale {
+  const lang = new URL(url, "http://localhost").searchParams.get("lang");
+  return isLocale(lang) ? lang : "en";
+}
+
+export function renderErrorPage(locale: Locale = "en"): string {
+  const copy = getErrorCopy(locale);
+
   return `<!doctype html>
-<html lang="en">
+<html lang="${locale}">
   <head>
     <meta charset="utf-8" />
-    <title>This page didn't load</title>
+    <title>${copy.loadTitle}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
       body { font: 15px/1.5 system-ui, -apple-system, sans-serif; background: #fafafa; color: #111; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
@@ -18,11 +34,11 @@ export function renderErrorPage(): string {
   </head>
   <body>
     <div class="card">
-      <h1>This page didn't load</h1>
-      <p>Something went wrong on our end. You can try refreshing or head back home.</p>
+      <h1>${copy.loadTitle}</h1>
+      <p>${copy.loadBody}</p>
       <div class="actions">
-        <button class="primary" onclick="location.reload()">Try again</button>
-        <a class="secondary" href="/">Go home</a>
+        <button class="primary" onclick="location.reload()">${copy.tryAgain}</button>
+        <a class="secondary" href="/">${copy.goHome}</a>
       </div>
     </div>
   </body>

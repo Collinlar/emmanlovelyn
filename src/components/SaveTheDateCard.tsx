@@ -1,8 +1,7 @@
 import { forwardRef } from "react";
-
-const VENUE_NAME = "VIU lounge";
-const VENUE_CITY = "73614 Schorndorf";
-const VENUE_COUNTRY = "Germany";
+import { useTranslation } from "@/i18n/useTranslation";
+import type { Locale } from "@/i18n/types";
+import { getNestedValue, interpolate, translations } from "@/i18n/translations";
 
 const paperTextureStyle = {
   backgroundImage: `
@@ -11,13 +10,22 @@ const paperTextureStyle = {
   `,
 };
 
-export const SAVE_THE_DATE_SHARE_TEXT =
-  "Emmanuel & Lovelyne invite you to their Traditional Engagement Ceremony on 29 August 2026, 10 am to 4 pm at VIU lounge, Schorndorf, Germany.";
+export function getShareText(locale: Locale): string {
+  return getNestedValue(translations[locale], "saveTheDate.shareText");
+}
 
 export const SaveTheDateCard = forwardRef<
   HTMLDivElement,
   { className?: string; compact?: boolean }
 >(function SaveTheDateCard({ className = "", compact = false }, ref) {
+  const { t } = useTranslation();
+
+  const venueLine = interpolate(t("saveTheDate.venueLine"), {
+    venue: t("venue.name"),
+    city: t("venue.city"),
+    country: t("venue.country"),
+  });
+
   return (
     <div
       ref={ref}
@@ -34,7 +42,7 @@ export const SaveTheDateCard = forwardRef<
             compact ? "text-[0.45rem]" : "text-[0.65rem]"
           }`}
         >
-          Save The Date
+          {t("saveTheDate.heading")}
         </p>
         <div className={`h-px bg-accent/20 my-2 ${compact ? "w-10" : "w-16"}`} />
         <p
@@ -42,7 +50,7 @@ export const SaveTheDateCard = forwardRef<
             compact ? "text-[0.4rem]" : "text-[0.6rem]"
           }`}
         >
-          Traditional Engagement Ceremony
+          {t("saveTheDate.ceremonyName")}
         </p>
         <h2
           className={`font-script leading-tight text-primary ${
@@ -71,21 +79,21 @@ export const SaveTheDateCard = forwardRef<
             compact ? "text-[0.4rem]" : "text-[0.65rem]"
           }`}
         >
-          August 29, 2026
+          {t("saveTheDate.date")}
         </p>
         <p
           className={`font-sans uppercase tracking-[0.25em] text-muted-foreground/80 mb-1 ${
             compact ? "text-[0.35rem]" : "text-[0.55rem]"
           }`}
         >
-          10 am - 4 pm
+          {t("saveTheDate.time")}
         </p>
         <p
           className={`font-sans uppercase tracking-[0.25em] text-muted-foreground/80 ${
             compact ? "text-[0.35rem]" : "text-[0.55rem]"
           }`}
         >
-          {VENUE_NAME}, {VENUE_CITY}, {VENUE_COUNTRY}
+          {venueLine}
         </p>
       </div>
     </div>

@@ -1,0 +1,128 @@
+{
+  "language": {
+    "english": "English",
+    "french": "Français",
+    "switchToEnglish": "English",
+    "switchToFrench": "Français",
+    "promptQuestion": "Souhaitez-vous voir cette invitation en français?",
+    "promptAccept": "Oui, en français",
+    "promptDecline": "Stay in English"
+  },
+  "meta": {
+    "title": "Emmanuel & Lovelyne · Traditional Engagement · 29 August 2026",
+    "description": "You're invited to the traditional engagement ceremony of Emmanuel & Lovelyne on 29 August 2026, 10 am to 4 pm, at VIU lounge, Schorndorf, Germany.",
+    "ogTitle": "Emmanuel & Lovelyne · Traditional Engagement Ceremony",
+    "ogDescription": "29 August 2026 · 10 am - 4 pm · VIU lounge, Karlsplatz 1, Schorndorf, Germany"
+  },
+  "errors": {
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The page you're looking for doesn't exist or has been moved.",
+    "goHome": "Go home",
+    "loadTitle": "This page didn't load",
+    "loadBody": "Something went wrong on our end. You can try refreshing or head back home.",
+    "tryAgain": "Try again"
+  },
+  "envelope": {
+    "openAria": "Open invitation",
+    "sealAlt": "Golden wax seal with monogram",
+    "digitalYes": "The Digital Yes",
+    "tapSeal": "Tap the seal to open"
+  },
+  "audio": {
+    "mute": "Mute music",
+    "unmute": "Unmute music"
+  },
+  "hero": {
+    "invitePrefix": "We cordially invite you to our",
+    "ceremonyName": "Traditional Engagement Ceremony",
+    "dateDisplay": "29 · 08 · 2026",
+    "timeDisplay": "10 am - 4 pm"
+  },
+  "couple": {
+    "photoAlt": "Emmanuel and Lovelyne",
+    "scriptureQuote": "...if we love one another, God lives in us and His love is made complete in us.",
+    "scriptureRef": "1 John 4:12"
+  },
+  "countdown": {
+    "label": "Counting Down",
+    "heading": "Until we celebrate together",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds"
+  },
+  "details": {
+    "sectionLabel": "The Celebration",
+    "heading": "When & Where",
+    "dateLabel": "The Date",
+    "dayName": "Saturday",
+    "dateMonth": "29 August",
+    "dateYear": "Two Thousand Twenty Six",
+    "timeRange": "10 am - 4 pm",
+    "venueLabel": "The Venue",
+    "country": "Germany",
+    "refreshments": "The event will include drinks and cocktails refreshments."
+  },
+  "map": {
+    "label": "Find Us Here",
+    "iframeTitle": "Event venue map",
+    "directions": "Get Directions"
+  },
+  "gifts": {
+    "heading": "Gifts",
+    "body": "We are incredibly blessed to have your love and support. If you would like to honor us with a gift, please find our registry and contribution details listed below:",
+    "registryLink": "View our gift registry"
+  },
+  "guestbook": {
+    "subtitle": "Words for the Future",
+    "heading": "A Note for the Bride & Groom",
+    "intro": "We would love to read your blessings! Please leave a message or favourite memory for us on our digital guestbook.",
+    "fromLabel": "From",
+    "fromPlaceholder": "Your name",
+    "messageLabel": "Message",
+    "messageLanguageLabel": "Writing in",
+    "messageLanguageHint": "Choose the language you are writing in. Your note will appear to guests viewing the site in that language.",
+    "messageLanguageEn": "English",
+    "messageLanguageFr": "Français",
+    "messagePlaceholder": "Share your blessing, advice, or a favourite memory...",
+    "submit": "Leave our blessing",
+    "submitting": "Adding your blessing...",
+    "notConfigured": "The guestbook is almost ready. Messages will appear here once the database is connected.",
+    "success": "Thank you. Your blessing has been added to our guestbook.",
+    "messagesHeading": "Messages of love",
+    "loading": "Gathering blessings...",
+    "loadError": "We could not load messages just now. Refresh and try again.",
+    "empty": "Be the first to leave a note in English for Emmanuel & Lovelyne.",
+    "validation": {
+      "languageRequired": "Choose the language you are writing in",
+      "nameMin": "Your name needs at least 2 characters",
+      "nameMax": "Your name cannot be longer than 80 characters",
+      "messageMin": "Your message needs at least 10 characters",
+      "messageMax": "Your message cannot be longer than 1000 characters"
+    },
+    "errors": {
+      "load": "We could not load the guestbook just now.",
+      "notConnected": "The guestbook is not connected yet. Please check back shortly.",
+      "submit": "Your message did not go through. Please try again."
+    }
+  },
+  "closing": {
+    "presence": "Your presence is the greatest gift of all.",
+    "withLove": "With love,",
+    "footerDate": "29 · 08 · 2026 · {venue}, {city}"
+  },
+  "saveTheDate": {
+    "heading": "Save The Date",
+    "ceremonyName": "Traditional Engagement Ceremony",
+    "date": "August 29, 2026",
+    "time": "10 am - 4 pm",
+    "venueLine": "{venue}, {city}, {country}",
+    "shareText": "Emmanuel & Lovelyne invite you to their Traditional Engagement Ceremony on 29 August 2026, 10 am to 4 pm at VIU lounge, Schorndorf, Germany."
+  },
+  "venue": {
+    "name": "VIU lounge",
+    "address": "Karlsplatz 1",
+    "city": "73614 Schorndorf",
+    "country": "Germany"
+  }
+}
