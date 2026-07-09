@@ -60,8 +60,7 @@
     "dateYear": "Deux Mille Vingt-Six",
     "timeRange": "10 h - 16 h",
     "venueLabel": "Le Lieu",
-    "country": "Allemagne",
-    "refreshments": "La célébration comprendra des boissons et des rafraîchissements."
+    "country": "Allemagne"
   },
   "map": {
     "label": "Comment nous trouver",
@@ -70,8 +69,16 @@
   },
   "gifts": {
     "heading": "Cadeaux",
-    "body": "Nous sommes profondément touchés par votre amour et votre soutien. Si vous souhaitez nous honorer d'un cadeau, vous trouverez ci-dessous notre registre et les détails de contribution :",
-    "registryLink": "Voir notre registre de cadeaux"
+    "body": "Nous sommes profondément touchés par votre amour et votre soutien. Si vous souhaitez nous honorer d'un cadeau, nos coordonnées bancaires sont indiquées ci-dessous :",
+    "bankHeading": "Virement bancaire",
+    "bankNameLabel": "Banque",
+    "bankName": "HypoVereinsbank",
+    "accountNameLabel": "Titulaire du compte",
+    "accountName": "Lovelyne Linda Donfack Voffo",
+    "ibanLabel": "IBAN",
+    "iban": "DE39545201940013976198",
+    "bicLabel": "BIC",
+    "bic": "HYVEDEMM483"
   },
   "guestbook": {
     "subtitle": "Mots pour l'avenir",

@@ -60,8 +60,7 @@
     "dateYear": "Two Thousand Twenty Six",
     "timeRange": "10 am - 4 pm",
     "venueLabel": "The Venue",
-    "country": "Germany",
-    "refreshments": "The event will include drinks and cocktails refreshments."
+    "country": "Germany"
   },
   "map": {
     "label": "Find Us Here",
@@ -70,8 +69,16 @@
   },
   "gifts": {
     "heading": "Gifts",
-    "body": "We are incredibly blessed to have your love and support. If you would like to honor us with a gift, please find our registry and contribution details listed below:",
-    "registryLink": "View our gift registry"
+    "body": "We are incredibly blessed to have your love and support. If you would like to honor us with a gift, our bank details are listed below:",
+    "bankHeading": "Bank transfer",
+    "bankNameLabel": "Bank",
+    "bankName": "HypoVereinsbank",
+    "accountNameLabel": "Account name",
+    "accountName": "Lovelyne Linda Donfack Voffo",
+    "ibanLabel": "IBAN",
+    "iban": "DE39545201940013976198",
+    "bicLabel": "BIC",
+    "bic": "HYVEDEMM483"
   },
   "guestbook": {
     "subtitle": "Words for the Future",

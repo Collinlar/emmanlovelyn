@@ -671,10 +671,6 @@ export default function Invitation() {
                 <p className="mt-1 font-display text-lg text-muted-foreground">{t("venue.country")}</p>
               </div>
             </div>
-
-            <p className="mt-10 max-w-lg font-display text-lg text-muted-foreground">
-              {t("details.refreshments")}
-            </p>
           </div>
         </RevealSection>
 
@@ -721,14 +717,41 @@ export default function Invitation() {
             <p className="mt-8 max-w-xl font-display text-lg leading-relaxed text-muted-foreground sm:text-xl">
               {t("gifts.body")}
             </p>
-            <a
-              href="https://www.paypal.com/pool/9pyygG8bGg?sr=ancr"
-              target="_blank"
-              rel="noreferrer"
-              className="mt-8 inline-block border-b border-accent px-2 pb-1 font-sans text-xs uppercase tracking-[0.25em] text-primary transition hover:text-accent-foreground break-all sm:text-sm"
-            >
-              {t("gifts.registryLink")}
-            </a>
+            <div className="mt-10 w-full max-w-md rounded-sm border border-border bg-card/50 p-8 text-left shadow-[var(--shadow-elegant)]">
+              <p className="font-sans text-[0.65rem] uppercase tracking-[0.4em] text-accent-foreground">
+                {t("gifts.bankHeading")}
+              </p>
+              <dl className="mt-6 space-y-4">
+                <div>
+                  <dt className="font-sans text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
+                    {t("gifts.bankNameLabel")}
+                  </dt>
+                  <dd className="mt-1 font-display text-lg text-foreground">{t("gifts.bankName")}</dd>
+                </div>
+                <div>
+                  <dt className="font-sans text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
+                    {t("gifts.accountNameLabel")}
+                  </dt>
+                  <dd className="mt-1 font-display text-lg text-foreground">{t("gifts.accountName")}</dd>
+                </div>
+                <div>
+                  <dt className="font-sans text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
+                    {t("gifts.ibanLabel")}
+                  </dt>
+                  <dd className="mt-1 font-display text-lg tracking-wide text-foreground break-all">
+                    {t("gifts.iban")}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="font-sans text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
+                    {t("gifts.bicLabel")}
+                  </dt>
+                  <dd className="mt-1 font-display text-lg tracking-wide text-foreground">
+                    {t("gifts.bic")}
+                  </dd>
+                </div>
+              </dl>
+            </div>
           </div>
         </RevealSection>
 
